@@ -39,7 +39,8 @@ class NewVisitorTest(unittest.TestCase):
         table = self.browser.find_element_by_id('listTable')
         rows = table.find_elements_by_tag_name('tr')
         self.assertTrue(
-            any(row.text=='買孔雀羽毛' for row in rows)
+            any(row.text=='買孔雀羽毛' for row in rows),
+            '新的待辦事項並未在表格中出現 -- 目前文字是：' + table.text,
         )
         # 頁面另外還有一個文字框，邀請她再加入其他項目，她輸入了「利用孔雀羽毛來做一個路亞」
         # (彤彤做事很講究章法的)
