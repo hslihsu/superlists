@@ -5,8 +5,12 @@
 </head>
 <body>
 <h1>待辦事項清單</h1>
-<input id=newItem placeholder=輸入一個待辦事項>
+<form method=POST>
+  {% csrf_token%}
+  <input id=newItem name=itemText placeholder=輸入一個待辦事項>
+</form>
 <table id=listTable>
+  <tr><td>{{itemText}}</td></tr>
 </table>
 </body>
 </html>
