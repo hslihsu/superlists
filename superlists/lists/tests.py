@@ -3,6 +3,7 @@ from django.core.urlresolvers import resolve
 from django.test import TestCase
 from django.shortcuts import render
 from lists.views import homePage
+from lists.models import Item
 # Create your tests here.
 
 class HomePageTest(TestCase):
@@ -25,3 +26,21 @@ class HomePageTest(TestCase):
         if expectedHTML:
             expectedHTML = expectedHTML.content.decode('UTF-8')
         self.assertEqual(response, expectedHTML)
+        
+class ItemModelTest(TestCase):
+    def test_saving_and_retrieving_items(self):
+        firstItem = Item()
+        firstItem.text = '第一個清單項目'
+        firstItem.save()
+        
+        secondItem = Item()
+        secondItem.text = '第二個清單項目'
+        secondItem.save()
+        
+        savedItems = Item.objects.all()
+        self.assertEqual(savedItems.count(), 2)
+        
+        firstSavedItem = savedItems[0]
+        secondSavedItem = savedItems[1]
+        self.assertEqual(firstSavedItem.text, '第一個清單項目')
+        self.assertEqual(secondSavedItem.text, '第二個清單項目')
