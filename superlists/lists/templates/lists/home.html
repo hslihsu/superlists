@@ -10,7 +10,9 @@
   <input id=newItem name=itemText placeholder=輸入一個待辦事項>
 </form>
 <table id=listTable>
-  <tr><td>{{itemText}}</td></tr>
+  {% for item in items %}
+    <tr><td>{{item.text}}</td></tr>
+  {% endfor %}
 </table>
 </body>
 </html>
