@@ -42,11 +42,12 @@ class NewVisitorTest(LiveServerTestCase):
         )
         
         # 她在文字框裡輸入了「買孔雀羽毛」(她的嗜好是做路亞假餌Fly-fishing lure)
-        
         inputBox.send_keys('買孔雀羽毛')
         
         # 當她按下「送出」按鈕，頁面資訊更新，待辦事項清單裡多了一個項目：「買孔雀羽毛」
         inputBox.send_keys(Keys.ENTER)
+        toniListURL = self.browser.current_url
+        self.assertRegex(toniListURL, '/lists/.+')
         self.check_for_row_in_listTable('買孔雀羽毛')
         # 頁面另外還有一個文字框，邀請她再加入其他項目，她輸入了「利用孔雀羽毛來做一個路亞」
         # (彤彤做事很講究章法的)
@@ -57,10 +58,31 @@ class NewVisitorTest(LiveServerTestCase):
         # 頁面再次更新，現在待辦事項清單裡有兩個項目了
         self.check_for_row_in_listTable('買孔雀羽毛')
         self.check_for_row_in_listTable('利用孔雀羽毛來做一個路亞')
+
+        # 現在，新的使用者翔翔也來到這個網站
+        ## 我們開啟一個新的瀏覽器Session來確保彤彤的資訊不會透過Cookies傳過來 #
+        self.browser.quit()
+        self.browser = webdriver.Firefox()
         
-        # 彤彤懷疑這個網站是否會記住她，她看到網站有為她產生專屬的URL，URL裡
-        # 有一些說明文字
-        self.fail('Finish the Test!')
-        # 她前往該URL，待辦清單依舊存在
+        # 翔翔拜訪首頁，彤彤的清單沒有出現
+        self.browser.get(self.live_server_url)
+        pageText = self.browser.find_element_by_tag_name('body').text
+        self.assertNotIn('買孔雀羽毛', pageText)
+        self.assertNotIn('利用孔雀羽毛來做一個路亞', pageText)
         
-        # 她很滿意，就上床睡覺了
+        # 翔翔建立一個新的清單以及一個新的項目，他不像彤彤一樣那麼有趣
+        inputBox = self.browser.find_element_by_id('newItem')
+        inputBox.send_keys('買鮮奶')
+        inputBox.send_keys(Keys.ENTER)
+
+        # 翔翔得到自己的URL
+        seanListURL = self.browser.current_url
+        self.assertRegex(seanListURL, '/lists/.+')
+        self.assertNotEqual(seanListURL, toniListURL)
+        
+        # 依舊看不到彤彤的清單
+        pageText = self.browser.find_element_by_tag_name('body').text
+        self.assertNotIn('買孔雀羽毛', pageText)
+        self.assertIn('買鮮奶', pageText)
+
+        # 兩個人都很滿意，就都上床睡覺了
