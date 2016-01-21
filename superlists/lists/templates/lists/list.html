@@ -5,12 +5,12 @@
 </head>
 <body>
 <h1>待辦事項清單</h1>
-<form method=POST action={% url 'lists:newList' %}>
+<form method=POST action={% url 'lists:addItem' list.id %}>
   {% csrf_token%}
   <input id=newItem name=itemText placeholder=輸入一個待辦事項>
 </form>
 <table id=listTable>
-  {% for item in items %}
+  {% for item in list.item_set.all %}
     <tr><td>{{item.text}}</td></tr>
   {% endfor %}
 </table>
