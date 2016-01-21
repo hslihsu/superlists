@@ -1,30 +1,11 @@
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from .base import FunctionalTest
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-import time
 
 
-class NewVisitorTest(StaticLiveServerTestCase):
+class NewVisitorTest(FunctionalTest):
     
-    def setUp(self):
-        profile = webdriver.FirefoxProfile()
-        profile.set_preference('browser.startup.homepage', 'about:blank')
-        profile.set_preference('startup.homepage_welcome_url', 'about:blank')
-        profile.set_preference('startup.homepage_welcome_url.additional', 'about:blank')
-        self.browser = webdriver.Firefox(profile)
-        self.browser.implicitly_wait(3) 
-        
-        
-    def tearDown(self):
-        self.browser.quit()
-        
-        
-    def check_for_row_in_listTable(self, rowText):
-        table = self.browser.find_element_by_id('listTable')
-        rows = table.find_elements_by_tag_name('tr')
-        self.assertIn(rowText, [row.text for row in rows])
-        
-        
+
     def test_can_start_a_list_and_retrieve_it_later(self):
         # 彤彤聽說有一款很酷的待辦事項應用程式，她前往它的首頁
         self.browser.get(self.live_server_url)
@@ -86,16 +67,3 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.assertIn('買鮮奶', pageText)
 
         # 兩個人都很滿意，就都上床睡覺了
-        
-    def test_layout_and_styling(self):
-        # 彤彤前往首頁
-        self.browser.get(self.live_server_url)
-        self.browser.set_window_size(1024, 768)
-        
-        # 她注意到輸入框是置中對齊的
-        inputbox = self.browser.find_element_by_id('newItem')
-        self.assertAlmostEqual(
-            inputbox.location['x'] + inputbox.size['width']/2,
-            512,
-            delta=5
-        )
