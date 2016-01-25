@@ -3,11 +3,12 @@ from django.core.urlresolvers import reverse
 from lists.models import Item, List
 from django.core.exceptions import ValidationError
 from django.utils.html import escape
+from lists.forms import ItemForm
 # Create your views here.
 
 
 def homePage(request):
-    return render(request, 'lists/home.html')
+    return render(request, 'lists/home.html', {'form':ItemForm()})
 
 
 def viewList(request, listID):

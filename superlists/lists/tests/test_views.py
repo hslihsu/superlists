@@ -3,14 +3,20 @@ from django.test import TestCase
 from lists.views import homePage
 from lists.models import Item, List
 from django.utils.html import escape
+from lists.forms import ItemForm
 # Create your tests here.
 
 class HomePageTest(TestCase):
 
-
-    def test_root_url_resolves_to_homePage_view(self):
-        found = resolve('/')
-        self.assertEqual(found.func, homePage)
+        
+    def test_homePage_renders_home_template(self):
+        response = self.client.get('/')
+        self.assertTemplateUsed(response, 'lists/home.html')
+        
+        
+    def test_homePage_uses_item_form(self):
+        response = self.client.get('/')
+        self.assertIsInstance(response.context['form'], ItemForm)
         
         
 
