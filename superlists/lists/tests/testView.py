@@ -2,6 +2,7 @@ from django.core.urlresolvers import resolve, reverse
 from django.test import TestCase
 from lists.views import homePage
 from lists.models import Item, List
+from django.utils.html import escape
 # Create your tests here.
 
 class HomePageTest(TestCase):
@@ -32,6 +33,18 @@ class ListViewTest(TestCase):
         list_ = List.objects.create()
         response = self.client.get(reverse('lists:viewList', args=(list_.id, )))
         self.assertTemplateUsed(response, 'lists/list.html')
+        
+    
+    def test_validation_errors_end_up_on_lists_page(self):
+        list_ = List.objects.create()
+        response = self.client.post(
+            reverse('lists:viewList', args=(list_.id, )),
+            data={'itemText':''}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'lists/list.html')
+        expectedError = escape('清單項目不能空白')
+        self.assertContains(response, expectedError)
 
 
 class NewListTest(TestCase):
@@ -50,6 +63,14 @@ class NewListTest(TestCase):
         self.assertRedirects(response, reverse('lists:viewList', args=(newList.id, )))
         
 
+    def test_validation_errors_are_sent_back_to_home_page_tempalte(self):
+        response = self.client.post(reverse('lists:newList'), data={'itemText':''})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'lists/home.html')
+        expectedError = escape('清單項目不能空白')
+        self.assertContains(response, expectedError)
+        
+        
 class NewItemTest(TestCase):
     
     

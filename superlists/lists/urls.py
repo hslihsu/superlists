@@ -6,5 +6,4 @@ urlpatterns = [
     url(r'^$', views.homePage, name='homePage'),
     url(r'^(?P<listID>[0-9]+)/$', views.viewList, name='viewList'),
     url(r'^new/$', views.newList, name='newList'),
-    url(r'(?P<listID>[0-9]+)/addItem/', views.addItem, name='addItem'),
 ]
