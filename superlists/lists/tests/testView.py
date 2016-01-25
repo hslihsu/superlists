@@ -62,14 +62,6 @@ class NewListTest(TestCase):
         newList = List.objects.first()
         self.assertRedirects(response, reverse('lists:viewList', args=(newList.id, )))
         
-
-    def test_validation_errors_are_sent_back_to_home_page_tempalte(self):
-        response = self.client.post(reverse('lists:newList'), data={'itemText':''})
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'lists/home.html')
-        expectedError = escape('清單項目不能空白')
-        self.assertContains(response, expectedError)
-        
         
 class NewItemTest(TestCase):
     
@@ -78,7 +70,7 @@ class NewItemTest(TestCase):
         otherList = List.objects.create()
         correctList = List.objects.create()
         self.client.post(
-            reverse('lists:addItem', args=(correctList.id, )),
+            reverse('lists:viewList', args=(correctList.id, )),
             data={'itemText':'目前清單的新項目'}
         )
         self.assertEqual(Item.objects.count(), 1)
@@ -91,7 +83,7 @@ class NewItemTest(TestCase):
         otherList = List.objects.create()
         correctList = List.objects.create()
         response = self.client.post(
-            reverse('lists:addItem', args=(correctList.id, )),
+            reverse('lists:viewList', args=(correctList.id, )),
             data={'itemText':'目前清單的新項目'}
         )
         self.assertRedirects(response, reverse('lists:viewList', args=(correctList.id, )))
