@@ -30,3 +30,18 @@ class ItemValidationTest(FunctionalTest):
         self.get_item_input_box().send_keys('泡茶\n')
         self.check_for_row_in_listTable('買鮮奶')
         self.check_for_row_in_listTable('泡茶')
+        
+    
+    def test_cannot_add_duplicate_items(self):
+        # 彤彤前往首頁並開啟了一個新清單
+        self.browser.get(self.live_server_url)
+        self.get_item_input_box().send_keys('買雨靴\n')
+        self.check_for_row_in_listTable('買雨靴')
+
+        # 她意外地重複輸入了另一個相同的項目
+        self.get_item_input_box().send_keys('買雨靴\n')
+        
+        # 她看到了很有用的錯誤訊息
+        self.check_for_row_in_listTable('買雨靴')
+        error = self.browser.find_element_by_css_selector('.has-error')
+        self.assertEqual(error.text, '你的清單中已有此項目')

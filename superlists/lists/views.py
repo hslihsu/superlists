@@ -19,7 +19,7 @@ def viewList(request, listID):
     form = ItemForm(data=request.POST)
     if form.is_valid():
         form.save(forList=list_)
-        return redirect(reverse('lists:viewList', args=(list_.id, )))
+        return redirect(list_)
     return render(request, 'lists/list.html', {'list':list_, 'form':form})
 
 def newList(request):
@@ -30,5 +30,5 @@ def newList(request):
     form = ItemForm(data=request.POST)
     if form.is_valid():
         form.save(forList=list_)
-        return redirect(reverse('lists:viewList', args=(list_.id, )))
+        return redirect(list_)
     return render(request, 'lists/home.html', {'form':form})

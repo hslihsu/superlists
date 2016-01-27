@@ -1,9 +1,11 @@
 from django import forms
-from lists.models import Item
 from django.utils.html import escape
+from django.core.exceptions import ValidationError
+from lists.models import Item
+
 
 EMPTY_ITEM_ERROR = escape('清單項目不能空白')
-
+DUPLICATE_ITEM_ERROR = escape('你的清單中已有此項目')
 
 class ItemForm(forms.ModelForm):
 
@@ -24,3 +26,17 @@ class ItemForm(forms.ModelForm):
     def save(self, forList):
         self.instance.list = forList
         return super().save()
+
+
+class EXistingListItemForm(ItemForm):
+    def __init__(self, forList, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.instance.list = forList
+    
+    
+    def validate_unique(self):
+        try:
+            self.instance.validate_unique()
+        except ValidationError as e:
+            e.error_dict = {'text':[DUPLICATE_ITEM_ERROR]}
+            self._update_errors(e)
