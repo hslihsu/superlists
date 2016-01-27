@@ -6,6 +6,7 @@ from django.utils.html import escape
 from lists.forms import ItemForm, EMPTY_ITEM_ERROR, DUPLICATE_ITEM_ERROR, ExistingListItemForm
 # Create your tests here.
 
+
 class HomePageTest(TestCase):
 
         
@@ -18,9 +19,9 @@ class HomePageTest(TestCase):
         response = self.client.get('/')
         self.assertIsInstance(response.context['form'], ItemForm)
         
-        
 
 class ListViewTest(TestCase):
+    
     
     def test_displays_only_items_for_that_list(self):
         correctList = List.objects.create()
@@ -34,6 +35,7 @@ class ListViewTest(TestCase):
         self.assertContains(response, 'itemey 2')
         self.assertNotContains(response, 'other list item 1')
         self.assertNotContains(response, 'other list item 2')
+        
         
     def test_use_list_template(self):
         list_ = List.objects.create()
@@ -67,8 +69,6 @@ class ListViewTest(TestCase):
         self.assertContains(response,EMPTY_ITEM_ERROR)
 
 
-
-
     def test_displays_item_form(self):
         list_ = List.objects.create()
         response = self.client.get(reverse('lists:viewList', args=(list_.id, )))
@@ -85,6 +85,7 @@ class ListViewTest(TestCase):
         self.assertTemplateUsed(response, 'lists/list.html')
         self.assertEqual(Item.objects.count(), 1)
 
+
 class NewListTest(TestCase):
     
     
@@ -98,10 +99,10 @@ class NewListTest(TestCase):
         response = self.client.post(reverse('lists:newList'), data={'text':''})
         self.assertContains(response, EMPTY_ITEM_ERROR)
         
+    
     def test_for_invalid_input_passes_form_to_template(self):
         response = self.client.post(reverse('lists:newList'), data={'text':''})
         self.assertIsInstance(response.context['form'], ItemForm)
-
 
 
     def test_saving_a_POST_request(self):
