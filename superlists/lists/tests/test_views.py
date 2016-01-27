@@ -3,7 +3,7 @@ from django.test import TestCase
 from lists.views import homePage
 from lists.models import Item, List
 from django.utils.html import escape
-from lists.forms import ItemForm, EMPTY_ITEM_ERROR, DUPLICATE_ITEM_ERROR, EXistingListItemForm
+from lists.forms import ItemForm, EMPTY_ITEM_ERROR, DUPLICATE_ITEM_ERROR, ExistingListItemForm
 # Create your tests here.
 
 class HomePageTest(TestCase):
@@ -59,7 +59,7 @@ class ListViewTest(TestCase):
 
     def test_for_invalid_input_passes_form_to_template(self):
         response = self.post_invalid_input()
-        self.assertIsInstance(response.context['form'], ItemForm)
+        self.assertIsInstance(response.context['form'], ExistingListItemForm)
 
 
     def test_for_invalid_input_shows_error_on_page(self):
@@ -72,7 +72,7 @@ class ListViewTest(TestCase):
     def test_displays_item_form(self):
         list_ = List.objects.create()
         response = self.client.get(reverse('lists:viewList', args=(list_.id, )))
-        self.assertIsInstance(response.context['form'], ItemForm)
+        self.assertIsInstance(response.context['form'], ExistingListItemForm)
         self.assertContains(response, 'name="text"')
         
         
@@ -122,13 +122,13 @@ class ExistingListItemFormTest(TestCase):
     
     def test_form_renders_item_text_input(self):
         list_ = List.objects.create()
-        form = EXistingListItemForm(forList=list_)
+        form = ExistingListItemForm(forList=list_)
         self.assertIn('placeholder="輸入一個待辦項目"', form.as_p())
 
 
     def test_form_validation_for_blank_item(self):
         list_ = List.objects.create()
-        form = EXistingListItemForm(forList=list_, data={'text':''})
+        form = ExistingListItemForm(forList=list_, data={'text':''})
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors['text'], [EMPTY_ITEM_ERROR])
 
@@ -137,6 +137,13 @@ class ExistingListItemFormTest(TestCase):
         list_ = List.objects.create()
         text = '沒有雙胞胎'
         Item.objects.create(list=list_, text=text)
-        form = EXistingListItemForm(forList=list_, data={'text':text})
+        form = ExistingListItemForm(forList=list_, data={'text':text})
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors['text'], [DUPLICATE_ITEM_ERROR])
+        
+        
+    def test_form_save(self):
+        list_ = List.objects.create()
+        form = ExistingListItemForm(forList=list_, data={'text':'Hi'})
+        newItem = form.save()
+        self.assertEqual(newItem, Item.objects.first())

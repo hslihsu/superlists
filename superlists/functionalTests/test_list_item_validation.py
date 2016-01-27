@@ -1,5 +1,6 @@
-from .base import FunctionalTest
+from lists.forms import DUPLICATE_ITEM_ERROR
 
+from .base import FunctionalTest
 
 
 class ItemValidationTest(FunctionalTest):
@@ -44,4 +45,4 @@ class ItemValidationTest(FunctionalTest):
         # 她看到了很有用的錯誤訊息
         self.check_for_row_in_listTable('買雨靴')
         error = self.browser.find_element_by_css_selector('.has-error')
-        self.assertEqual(error.text, '你的清單中已有此項目')
+        self.assertEqual(error.text, DUPLICATE_ITEM_ERROR)
